@@ -4,6 +4,7 @@ import CpuWidget from './components/CpuWidget';
 import RamWidget from './components/RamWidget';
 import DiskWidget from './components/DiskWidget';
 import SystemWidget from './components/SystemWidget';
+import AlertsWidget from './components/AlertsWidget';
 
 function App() {
   const { metrics, history, connected } = useMetrics();
@@ -41,19 +42,23 @@ function App() {
             <RamWidget memory={metrics.memory} history={history} />
           </div>
 
-          {/* Disks Grid */}
-          <div className="panel">
-            <div className="panel-header" style={{ marginBottom: '1rem' }}>
-              <div className="panel-title">
-                <Database size={20} />
-                <span>Storage Devices</span>
+          {/* Disks & Alerts Grid */}
+          <div className="grid-layout large mb-4" style={{ marginBottom: '1.5rem', gridTemplateColumns: '1fr 1fr' }}>
+            <div className="panel">
+              <div className="panel-header" style={{ marginBottom: '1rem' }}>
+                <div className="panel-title">
+                  <Database size={20} />
+                  <span>Storage Devices</span>
+                </div>
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '1rem' }}>
+                {metrics.disks.map((disk, idx) => (
+                  <DiskWidget key={`${disk.fs}-${idx}`} disk={disk} />
+                ))}
               </div>
             </div>
-            <div className="grid-layout">
-              {metrics.disks.map((disk, idx) => (
-                <DiskWidget key={`${disk.fs}-${idx}`} disk={disk} />
-              ))}
-            </div>
+
+            <AlertsWidget alerts={metrics.alerts} />
           </div>
         </main>
       )}

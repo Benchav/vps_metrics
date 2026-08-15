@@ -3,6 +3,24 @@ import { Server } from 'socket.io';
 
 const INTERVAL_MS = 2000; // Emit every 2 seconds
 
+// Simple in-memory alert history (last 50 alerts)
+const alertHistory: any[] = [];
+
+function addAlert(type: string, level: string, message: string, value: number) {
+  const newAlert = {
+    id: Math.random().toString(36).substring(2, 9),
+    timestamp: new Date().toISOString(),
+    type,
+    level,
+    message,
+    value
+  };
+  alertHistory.unshift(newAlert);
+  if (alertHistory.length > 50) {
+    alertHistory.pop();
+  }
+}
+
 export function startMonitoring(io: Server) {
   console.log('Started hardware monitoring loop...');
   
@@ -32,7 +50,9 @@ export function startMonitoring(io: Server) {
         memory: {
           total: mem.total,
           used: mem.active,
-          free: mem.available,
+          free: mem.free,
+          buffcache: mem.buffcache,
+          available: mem.available,
           usagePercentage: (mem.active / mem.total) * 100
         },
         disks: fsSize.map(disk => ({
@@ -54,8 +74,34 @@ export function startMonitoring(io: Server) {
           distro: osInfo.distro,
           release: osInfo.release,
           uptime: time.uptime
-        }
+        },
+        alerts: alertHistory
       };
+
+      // --- Evaluate Alerts ---
+      // CPU
+      if (metrics.cpu.load > 95) {
+        addAlert('cpu', 'danger', `Critical CPU Load: ${metrics.cpu.load.toFixed(1)}%`, metrics.cpu.load);
+      } else if (metrics.cpu.load > 90) {
+        addAlert('cpu', 'warning', `High CPU Load: ${metrics.cpu.load.toFixed(1)}%`, metrics.cpu.load);
+      }
+
+      // RAM
+      if (metrics.memory.usagePercentage > 95) {
+        addAlert('ram', 'danger', `Critical RAM Usage: ${metrics.memory.usagePercentage.toFixed(1)}%`, metrics.memory.usagePercentage);
+      } else if (metrics.memory.usagePercentage > 90) {
+        addAlert('ram', 'warning', `High RAM Usage: ${metrics.memory.usagePercentage.toFixed(1)}%`, metrics.memory.usagePercentage);
+      }
+
+      // Disk
+      metrics.disks.forEach(disk => {
+        if (disk.usePercentage > 95) {
+          addAlert('disk', 'danger', `Critical Disk Usage on ${disk.fs}: ${disk.usePercentage.toFixed(1)}%`, disk.usePercentage);
+        } else if (disk.usePercentage > 90) {
+          addAlert('disk', 'warning', `High Disk Usage on ${disk.fs}: ${disk.usePercentage.toFixed(1)}%`, disk.usePercentage);
+        }
+      });
+      // ------------------------
 
       io.emit('metrics', metrics);
     } catch (error) {

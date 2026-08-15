@@ -9,8 +9,10 @@ export interface SystemMetrics {
   };
   memory: {
     total: number;
-    used: number;
+    used: number; // active memory
     free: number;
+    buffcache: number; // OS cache and buffers
+    available: number; // Actually available memory
     usagePercentage: number;
   };
   disks: Array<{
@@ -31,4 +33,14 @@ export interface SystemMetrics {
     release: string;
     uptime: number;
   };
+  alerts: SystemAlert[];
+}
+
+export interface SystemAlert {
+  id: string;
+  timestamp: string;
+  type: 'cpu' | 'ram' | 'disk' | 'network';
+  level: 'warning' | 'danger';
+  message: string;
+  value: number;
 }

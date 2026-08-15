@@ -34,7 +34,7 @@ export default function RamWidget({ memory, history }: Props) {
       </div>
       
       <div className="text-secondary" style={{ fontSize: '0.875rem' }}>
-        {formatBytes(memory.used)} used / {formatBytes(memory.total)} total
+        {formatBytes(memory.used)} active / {formatBytes(memory.buffcache)} cache / {formatBytes(memory.total)} total
       </div>
 
       <div className="chart-container">
