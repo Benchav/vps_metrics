@@ -18,15 +18,18 @@ const INTERVAL_MS = 2000; // Emit every 2 seconds
 function startMonitoring(io) {
     console.log('Started hardware monitoring loop...');
     setInterval(() => __awaiter(this, void 0, void 0, function* () {
+        var _a, _b;
         try {
             // Run queries in parallel for efficiency
-            const [cpu, mem, osInfo, currentLoad, fsSize, networkStats] = yield Promise.all([
+            // si.time() is included here — calling it outside Promise.all would block synchronously
+            const [cpu, mem, osInfo, currentLoad, fsSize, networkStats, time] = yield Promise.all([
                 systeminformation_1.default.cpu(),
                 systeminformation_1.default.mem(),
                 systeminformation_1.default.osInfo(),
                 systeminformation_1.default.currentLoad(),
                 systeminformation_1.default.fsSize(),
-                systeminformation_1.default.networkStats()
+                systeminformation_1.default.networkStats(),
+                systeminformation_1.default.time()
             ]);
             const metrics = {
                 timestamp: new Date().toISOString(),
@@ -50,16 +53,18 @@ function startMonitoring(io) {
                     used: disk.used,
                     usePercentage: disk.use
                 })),
+                // systeminformation returns -1 for rx_sec/tx_sec on the first sample
+                // because it needs two data points to calculate throughput. Clamp to 0.
                 network: networkStats.length > 0 ? {
                     interface: networkStats[0].iface,
-                    rx_sec: networkStats[0].rx_sec,
-                    tx_sec: networkStats[0].tx_sec
+                    rx_sec: Math.max(0, (_a = networkStats[0].rx_sec) !== null && _a !== void 0 ? _a : 0),
+                    tx_sec: Math.max(0, (_b = networkStats[0].tx_sec) !== null && _b !== void 0 ? _b : 0)
                 } : null,
                 os: {
                     platform: osInfo.platform,
                     distro: osInfo.distro,
                     release: osInfo.release,
-                    uptime: systeminformation_1.default.time().uptime
+                    uptime: time.uptime
                 }
             };
             io.emit('metrics', metrics);

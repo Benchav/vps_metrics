@@ -1,4 +1,4 @@
-import { Terminal, Globe, Clock } from 'lucide-react';
+import { Terminal, Globe, Clock, ArrowDownToLine, ArrowUpFromLine } from 'lucide-react';
 import type { SystemMetrics } from '../types';
 
 interface Props {
@@ -33,21 +33,21 @@ export default function SystemWidget({ os, network }: Props) {
       <div className="grid-layout">
         <div>
           <div className="panel-title mb-2">
-            <Terminal size={18} />
+            <Terminal size={18} className="text-accent" style={{ filter: 'drop-shadow(0 0 5px var(--accent-glow))' }} />
             <span>System Information</span>
           </div>
           <ul className="details-list">
             <li>
               <span className="details-label">OS</span>
-              <span>{os.distro} {os.release}</span>
+              <span style={{ fontWeight: 500 }}>{os.distro} {os.release}</span>
             </li>
             <li>
               <span className="details-label">Platform</span>
-              <span style={{ textTransform: 'capitalize' }}>{os.platform}</span>
+              <span style={{ textTransform: 'capitalize', fontWeight: 500 }}>{os.platform}</span>
             </li>
             <li>
               <span className="details-label">Uptime</span>
-              <span style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+              <span style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', fontWeight: 500 }}>
                 <Clock size={14} className="text-secondary" />
                 {formatUptime(os.uptime)}
               </span>
@@ -58,17 +58,23 @@ export default function SystemWidget({ os, network }: Props) {
         {network && (
           <div>
             <div className="panel-title mb-2">
-              <Globe size={18} />
+              <Globe size={18} className="text-accent" style={{ filter: 'drop-shadow(0 0 5px var(--accent-glow))' }} />
               <span>Network ({network.interface})</span>
             </div>
             <ul className="details-list">
               <li>
                 <span className="details-label">Download (RX)</span>
-                <span style={{ color: 'var(--success)' }}>↓ {formatNetworkSpeed(network.rx_sec)}</span>
+                <span style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', color: 'var(--success)', fontWeight: 600 }}>
+                  <ArrowDownToLine size={14} /> 
+                  {formatNetworkSpeed(network.rx_sec)}
+                </span>
               </li>
               <li>
                 <span className="details-label">Upload (TX)</span>
-                <span style={{ color: 'var(--accent)' }}>↑ {formatNetworkSpeed(network.tx_sec)}</span>
+                <span style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', color: 'var(--accent)', fontWeight: 600 }}>
+                  <ArrowUpFromLine size={14} />
+                  {formatNetworkSpeed(network.tx_sec)}
+                </span>
               </li>
             </ul>
           </div>

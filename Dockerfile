@@ -1,7 +1,7 @@
 FROM node:20-alpine
 
-# Install PM2 and serve globally
-RUN npm install -g pm2 serve
+# Install PM2 globally
+RUN npm install -g pm2
 
 WORKDIR /app
 
@@ -24,8 +24,8 @@ RUN npm run build -w backend
 # Build frontend (React/Vite)
 RUN npm run build -w frontend
 
-# Expose required ports
-EXPOSE 3012 3015
+# Expose required port
+EXPOSE 3012
 
-# Start both services using PM2
+# Start the service using PM2
 CMD ["pm2-runtime", "ecosystem.config.js"]

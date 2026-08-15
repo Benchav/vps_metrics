@@ -9,13 +9,15 @@ export function startMonitoring(io: Server) {
   setInterval(async () => {
     try {
       // Run queries in parallel for efficiency
-      const [cpu, mem, osInfo, currentLoad, fsSize, networkStats] = await Promise.all([
+      // si.time() is included here — calling it outside Promise.all would block synchronously
+      const [cpu, mem, osInfo, currentLoad, fsSize, networkStats, time] = await Promise.all([
         si.cpu(),
         si.mem(),
         si.osInfo(),
         si.currentLoad(),
         si.fsSize(),
-        si.networkStats()
+        si.networkStats(),
+        si.time()
       ]);
 
       const metrics = {
@@ -40,16 +42,18 @@ export function startMonitoring(io: Server) {
           used: disk.used,
           usePercentage: disk.use
         })),
+        // systeminformation returns -1 for rx_sec/tx_sec on the first sample
+        // because it needs two data points to calculate throughput. Clamp to 0.
         network: networkStats.length > 0 ? {
           interface: networkStats[0].iface,
-          rx_sec: networkStats[0].rx_sec,
-          tx_sec: networkStats[0].tx_sec
+          rx_sec: Math.max(0, networkStats[0].rx_sec ?? 0),
+          tx_sec: Math.max(0, networkStats[0].tx_sec ?? 0)
         } : null,
         os: {
           platform: osInfo.platform,
           distro: osInfo.distro,
           release: osInfo.release,
-          uptime: si.time().uptime
+          uptime: time.uptime
         }
       };
 
