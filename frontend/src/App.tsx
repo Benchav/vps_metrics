@@ -1,49 +1,12 @@
-import { useState, useEffect } from 'react';
-import { Server, Activity, Database, LogOut } from 'lucide-react';
+import { Server, Activity, Database } from 'lucide-react';
 import { useMetrics } from './hooks/useMetrics';
 import CpuWidget from './components/CpuWidget';
 import RamWidget from './components/RamWidget';
 import DiskWidget from './components/DiskWidget';
 import SystemWidget from './components/SystemWidget';
-import LoginWidget from './components/LoginWidget';
 
 function App() {
-  const [apiKey, setApiKey] = useState(() => localStorage.getItem('vps_api_key') || '');
-  const { metrics, history, connected, authError } = useMetrics(apiKey);
-
-  const handleLogin = (key: string) => {
-    localStorage.setItem('vps_api_key', key);
-    setApiKey(key);
-  };
-
-  const handleLogout = () => {
-    localStorage.removeItem('vps_api_key');
-    setApiKey('');
-  };
-
-  // If there's an auth error after trying to connect, we might want to let them know
-  useEffect(() => {
-    if (authError) {
-      // Small timeout so user sees it failed before clearing
-      const timer = setTimeout(() => {
-        handleLogout();
-      }, 1500);
-      return () => clearTimeout(timer);
-    }
-  }, [authError]);
-
-  if (!apiKey || authError) {
-    return (
-      <div className="dashboard-container">
-        {authError && (
-          <div style={{ background: 'var(--danger)', color: '#fff', padding: '1rem', borderRadius: '8px', textAlign: 'center', marginBottom: '1rem' }}>
-            {authError}
-          </div>
-        )}
-        <LoginWidget onLogin={handleLogin} />
-      </div>
-    );
-  }
+  const { metrics, history, connected } = useMetrics();
 
   return (
     <div className="dashboard-container">
@@ -57,9 +20,6 @@ function App() {
             <div className={`status-dot ${connected ? 'connected' : ''}`} />
             {connected ? 'Live' : 'Connecting...'}
           </div>
-          <button onClick={handleLogout} className="logout-btn" title="Logout">
-            <LogOut size={18} />
-          </button>
         </div>
       </header>
 

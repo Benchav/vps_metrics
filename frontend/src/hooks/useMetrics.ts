@@ -7,31 +7,16 @@ const SOCKET_URL = import.meta.env.PROD
   ? '/' 
   : 'http://localhost:3012';
 
-export function useMetrics(apiKey: string) {
+export function useMetrics() {
   const [metrics, setMetrics] = useState<SystemMetrics | null>(null);
   const [history, setHistory] = useState<SystemMetrics[]>([]);
   const [connected, setConnected] = useState(false);
-  const [authError, setAuthError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!apiKey) return;
-
-    setAuthError(null);
-    const socket: Socket = io(SOCKET_URL, {
-      auth: { token: apiKey }
-    });
+    const socket: Socket = io(SOCKET_URL);
 
     socket.on('connect', () => {
       setConnected(true);
-      setAuthError(null);
-    });
-
-    socket.on('connect_error', (err) => {
-      if (err.message.includes('Authentication error')) {
-        setAuthError('Invalid API Key');
-        setConnected(false);
-        socket.disconnect();
-      }
     });
 
     socket.on('disconnect', () => {
@@ -53,7 +38,7 @@ export function useMetrics(apiKey: string) {
     return () => {
       socket.disconnect();
     };
-  }, [apiKey]);
+  }, []);
 
-  return { metrics, history, connected, authError };
+  return { metrics, history, connected };
 }
