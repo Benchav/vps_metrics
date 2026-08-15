@@ -11,6 +11,8 @@ export function useMetrics() {
   const [metrics, setMetrics] = useState<SystemMetrics | null>(null);
   const [history, setHistory] = useState<SystemMetrics[]>([]);
   const [connected, setConnected] = useState(false);
+  const [serverVersion, setServerVersion] = useState<string | null>(null);
+  const [updateAvailable, setUpdateAvailable] = useState(false);
 
   useEffect(() => {
     const socket: Socket = io(SOCKET_URL);
@@ -25,6 +27,14 @@ export function useMetrics() {
 
     socket.on('metrics', (data: SystemMetrics) => {
       setMetrics(data);
+      
+      setServerVersion(prev => {
+        if (prev && prev !== data.serverVersion) {
+          setUpdateAvailable(true);
+        }
+        return prev || data.serverVersion;
+      });
+
       setHistory((prev) => {
         const newHistory = [...prev, data];
         // Keep last 30 data points for charts
@@ -40,5 +50,5 @@ export function useMetrics() {
     };
   }, []);
 
-  return { metrics, history, connected };
+  return { metrics, history, connected, updateAvailable, serverVersion };
 }

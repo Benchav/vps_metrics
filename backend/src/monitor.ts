@@ -2,6 +2,7 @@ import si from 'systeminformation';
 import { Server } from 'socket.io';
 
 const INTERVAL_MS = 2000;
+const SERVER_VERSION = Date.now().toString();
 
 const alertHistory: any[] = [];
 
@@ -38,6 +39,7 @@ export function startMonitoring(io: Server) {
       ]);
 
       const metrics = {
+        serverVersion: SERVER_VERSION,
         timestamp: new Date().toISOString(),
         cpu: {
           manufacturer: cpu.manufacturer,

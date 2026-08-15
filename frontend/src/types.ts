@@ -1,4 +1,5 @@
 export interface SystemMetrics {
+  serverVersion: string;
   timestamp: string;
   cpu: {
     manufacturer: string;

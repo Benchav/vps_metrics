@@ -108,7 +108,7 @@ function OverviewPanel({ metrics, history, onNavigate }: {
 
 // ── App Root ─────────────────────────────────────────────────
 export default function App() {
-  const { metrics, history, connected } = useMetrics();
+  const { metrics, history, connected, updateAvailable } = useMetrics();
   const [panel, setPanel] = useState<NavPanel>('overview');
 
   return (
@@ -117,7 +117,7 @@ export default function App() {
       <header className="app-header">
         <div className="header-brand">
           <span className="header-logo-dot" />
-          VPS Monitoring
+          JoshBen-Monitoring
         </div>
         <div className="header-meta">
           {metrics && (
@@ -133,6 +133,18 @@ export default function App() {
       </header>
 
       {/* Body */}
+      {updateAvailable && (
+        <div 
+          onClick={() => window.location.reload()}
+          style={{ 
+            background: 'var(--c-alert-dim)', color: 'var(--c-alert)', padding: '0.6rem', textAlign: 'center', 
+            fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer', borderBottom: '1px solid rgba(248,81,73,0.3)',
+            display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem'
+          }}
+        >
+          <Activity size={14} /> New update available! Click here to refresh the dashboard.
+        </div>
+      )}
       {!metrics ? (
         <div className="app-body">
           <div className="loading-screen">
