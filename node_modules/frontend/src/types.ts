@@ -4,15 +4,21 @@ export interface SystemMetrics {
     manufacturer: string;
     brand: string;
     cores: number;
+    physicalCores: number;
     speed: number;
+    speedMax: number;
     load: number;
+    loadUser: number;
+    loadSystem: number;
   };
   memory: {
     total: number;
-    used: number; // active memory
+    used: number;
     free: number;
-    buffcache: number; // OS cache and buffers
-    available: number; // Actually available memory
+    buffcache: number;
+    available: number;
+    swapTotal: number;
+    swapUsed: number;
     usagePercentage: number;
   };
   disks: Array<{
@@ -22,10 +28,18 @@ export interface SystemMetrics {
     used: number;
     usePercentage: number;
   }>;
+  diskIO: {
+    readSpeed: number;
+    writeSpeed: number;
+    readOps: number;
+    writeOps: number;
+  } | null;
   network: {
     interface: string;
     rx_sec: number;
     tx_sec: number;
+    rx_bytes: number;
+    tx_bytes: number;
   } | null;
   os: {
     platform: string;
