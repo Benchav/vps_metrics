@@ -1,7 +1,6 @@
-import React from 'react';
 import { Activity } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { SystemMetrics } from '../types';
+import type { SystemMetrics } from '../types';
 
 interface Props {
   memory: SystemMetrics['memory'];
@@ -54,7 +53,7 @@ export default function RamWidget({ memory, history }: Props) {
               contentStyle={{ background: 'var(--panel-bg)', border: '1px solid var(--panel-border)', borderRadius: '8px' }}
               labelStyle={{ display: 'none' }}
               itemStyle={{ color: 'var(--text-primary)' }}
-              formatter={(value: number) => [`${value.toFixed(1)}%`, 'Usage']}
+              formatter={(value: any) => [`${Number(value).toFixed(1)}%`, 'Usage']}
             />
             <Area type="monotone" dataKey="memory.usagePercentage" stroke={color} fillOpacity={1} fill="url(#colorRam)" isAnimationActive={false} />
           </AreaChart>

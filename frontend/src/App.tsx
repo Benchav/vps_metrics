@@ -1,5 +1,4 @@
-import React from 'react';
-import { Cpu, Server, Activity, Database, HardDrive } from 'lucide-react';
+import { Server, Activity, Database } from 'lucide-react';
 import { useMetrics } from './hooks/useMetrics';
 import CpuWidget from './components/CpuWidget';
 import RamWidget from './components/RamWidget';

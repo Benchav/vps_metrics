@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
-import { SystemMetrics } from '../types';
+import type { SystemMetrics } from '../types';
 
 // Connect to the backend on port 3012 (or relative if proxied)
-const SOCKET_URL = process.env.NODE_ENV === 'production' 
+const SOCKET_URL = import.meta.env.PROD 
   ? window.location.origin // In production, we assume backend serves frontend or via proxy
   : 'http://localhost:3012';
 

@@ -1,7 +1,6 @@
-import React from 'react';
 import { Cpu } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { SystemMetrics } from '../types';
+import type { SystemMetrics } from '../types';
 
 interface Props {
   cpu: SystemMetrics['cpu'];
@@ -46,7 +45,7 @@ export default function CpuWidget({ cpu, history }: Props) {
               contentStyle={{ background: 'var(--panel-bg)', border: '1px solid var(--panel-border)', borderRadius: '8px' }}
               labelStyle={{ display: 'none' }}
               itemStyle={{ color: 'var(--text-primary)' }}
-              formatter={(value: number) => [`${value.toFixed(1)}%`, 'Load']}
+              formatter={(value: any) => [`${Number(value).toFixed(1)}%`, 'Load']}
             />
             <Area type="monotone" dataKey="cpu.load" stroke={color} fillOpacity={1} fill="url(#colorCpu)" isAnimationActive={false} />
           </AreaChart>
