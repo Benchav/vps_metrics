@@ -4,6 +4,7 @@ import { Activity, Cpu, MemoryStick, HardDrive, Wifi, Download } from 'lucide-re
 import { AreaChart, Area, ResponsiveContainer } from 'recharts';
 
 import { useMetrics } from './hooks/useMetrics';
+import { generatePDFReport } from './utils/reportGenerator';
 import SidebarNav from './components/SidebarNav';
 import CpuWidget from './components/CpuWidget';
 import RamWidget from './components/RamWidget';
@@ -126,7 +127,7 @@ export default function App() {
         h.network?.tx_sec || 0
       ].join(',');
     });
-    const csvContent = "data:text/csv;charset=utf-8," + headers.join(',') + "\\n" + rows.join("\\n");
+    const csvContent = "data:text/csv;charset=utf-8," + headers.join(',') + "\n" + rows.join("\n");
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
@@ -135,6 +136,12 @@ export default function App() {
     link.click();
     document.body.removeChild(link);
     toast.success("CSV report downloaded!");
+  };
+
+  const handleDownloadPDF = () => {
+    if (!history.length || !metrics) return;
+    generatePDFReport(metrics, history);
+    toast.success("PDF report generated successfully!");
   };
 
   return (
@@ -148,11 +155,16 @@ export default function App() {
           JoshBen-Monitoring
         </div>
         <div className="header-meta">
-          {history.length > 0 && (
-            <button onClick={handleDownloadCSV} className="summary-card" style={{ padding: '0.25rem 0.5rem', background: 'var(--panel-bg)', minHeight: 0, gap: '0.3rem', flexDirection: 'row', alignItems: 'center' }}>
-              <Download size={14} color="var(--c-mem)" />
-              <span style={{ fontSize: '0.75rem' }}>Export CSV</span>
-            </button>
+          {history.length > 0 && metrics && (
+            <div style={{ display: 'flex', gap: '0.5rem' }}>
+              <button onClick={handleDownloadCSV} className="summary-card" style={{ padding: '0.25rem 0.5rem', background: 'var(--panel-bg)', minHeight: 0, gap: '0.3rem', flexDirection: 'row', alignItems: 'center' }}>
+                <span style={{ fontSize: '0.75rem', fontWeight: 600 }}>CSV</span>
+              </button>
+              <button onClick={handleDownloadPDF} className="summary-card" style={{ padding: '0.25rem 0.5rem', background: 'var(--panel-bg)', minHeight: 0, gap: '0.3rem', flexDirection: 'row', alignItems: 'center', borderColor: 'var(--c-cpu)' }}>
+                <Download size={14} color="var(--c-cpu)" />
+                <span style={{ fontSize: '0.75rem', color: 'var(--c-cpu)', fontWeight: 600 }}>PDF</span>
+              </button>
+            </div>
           )}
           {metrics && (
             <span className="mono text-muted" style={{ fontSize: '0.75rem' }}>
