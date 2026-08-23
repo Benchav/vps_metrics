@@ -1,4 +1,5 @@
 import { useState, memo } from 'react';
+import { Toaster } from 'sonner';
 import { Activity, Cpu, MemoryStick, HardDrive, Wifi } from 'lucide-react';
 import { AreaChart, Area, ResponsiveContainer } from 'recharts';
 
@@ -113,6 +114,7 @@ export default function App() {
 
   return (
     <div className="app-shell">
+      <Toaster theme="dark" position="top-right" closeButton richColors />
       {/* Header */}
       <header className="app-header">
         <div className="header-brand">

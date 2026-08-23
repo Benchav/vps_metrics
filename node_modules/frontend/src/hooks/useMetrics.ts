@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
+import { toast } from 'sonner';
 import { io, Socket } from 'socket.io-client';
 import type { SystemMetrics } from '@vps-metrics/shared';
 
@@ -13,6 +14,7 @@ export function useMetrics() {
   const [connected, setConnected] = useState(false);
   const [serverVersion, setServerVersion] = useState<string | null>(null);
   const [updateAvailable, setUpdateAvailable] = useState(false);
+  const lastAlertTime = useRef<number>(Date.now());
 
   useEffect(() => {
     const socket: Socket = io(SOCKET_URL);
@@ -29,6 +31,10 @@ export function useMetrics() {
       setHistory(data);
       if (data.length > 0) {
         setMetrics(data[data.length - 1]);
+        const latest = data[data.length - 1];
+        if (latest.alerts.length > 0) {
+          lastAlertTime.current = Math.max(...latest.alerts.map(a => new Date(a.timestamp).getTime()));
+        }
       }
     });
 
@@ -41,6 +47,20 @@ export function useMetrics() {
         }
         return prev || data.serverVersion;
       });
+      
+      if (data.alerts && data.alerts.length > 0) {
+        data.alerts.forEach(alert => {
+          const alertTime = new Date(alert.timestamp).getTime();
+          if (alertTime > lastAlertTime.current) {
+            lastAlertTime.current = alertTime;
+            if (alert.level === 'danger') {
+              toast.error(alert.message);
+            } else {
+              toast.warning(alert.message);
+            }
+          }
+        });
+      }
 
       setHistory((prev) => {
         const newHistory = [...prev, data];
