@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { HardDrive } from 'lucide-react';
 import type { SystemMetrics } from '@vps-metrics/shared';
 
@@ -66,7 +67,7 @@ function DiskRow({ disk }: { disk: SystemMetrics['disks'][number] }) {
   );
 }
 
-export default function DiskWidget({ disks, diskIO }: Props) {
+export default memo(function DiskWidget({ disks, diskIO }: Props) {
   const totalUsed = disks.reduce((a, d) => a + d.used, 0);
   const totalSize = disks.reduce((a, d) => a + d.size, 0);
   const maxPct    = Math.max(...disks.map(d => d.usePercentage), 0);
@@ -129,4 +130,4 @@ export default function DiskWidget({ disks, diskIO }: Props) {
       </div>
     </div>
   );
-}
+});

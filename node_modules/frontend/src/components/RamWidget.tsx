@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { MemoryStick } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import type { SystemMetrics } from '@vps-metrics/shared';
@@ -28,7 +29,7 @@ function StatBox({ label, value, color }: { label: string; value: string; color?
   );
 }
 
-export default function RamWidget({ memory, history }: Props) {
+export default memo(function RamWidget({ memory, history }: Props) {
   const isDanger  = memory.usagePercentage > 95;
   const isWarning = memory.usagePercentage > 85;
   const color = isDanger ? 'var(--c-alert)' : isWarning ? 'var(--warning)' : C;
@@ -114,4 +115,4 @@ export default function RamWidget({ memory, history }: Props) {
       </div>
     </div>
   );
-}
+});

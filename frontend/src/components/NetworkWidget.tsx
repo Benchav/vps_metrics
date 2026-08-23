@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { Wifi, ArrowDownToLine, ArrowUpFromLine } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import type { SystemMetrics } from '@vps-metrics/shared';
@@ -36,7 +37,7 @@ function StatBox({ label, value, color }: { label: string; value: string; color?
   );
 }
 
-export default function NetworkWidget({ network, history }: Props) {
+export default memo(function NetworkWidget({ network, history }: Props) {
   if (!network) {
     return (
       <div className="detail-view">
@@ -143,4 +144,4 @@ export default function NetworkWidget({ network, history }: Props) {
       </div>
     </div>
   );
-}
+});

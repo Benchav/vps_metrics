@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { Cpu } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
 import type { SystemMetrics } from '@vps-metrics/shared';
@@ -23,7 +24,7 @@ function StatBox({ label, value, color }: { label: string; value: string; color?
   );
 }
 
-export default function CpuWidget({ cpu, history }: Props) {
+export default memo(function CpuWidget({ cpu, history }: Props) {
   const isDanger  = cpu.load > 95;
   const isWarning = cpu.load > 85;
   const color = isDanger ? 'var(--c-alert)' : isWarning ? 'var(--warning)' : C;
@@ -103,4 +104,4 @@ export default function CpuWidget({ cpu, history }: Props) {
       </div>
     </div>
   );
-}
+});

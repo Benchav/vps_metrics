@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { AlertTriangle, Clock, ServerCrash } from 'lucide-react';
 import type { SystemAlert } from '@vps-metrics/shared';
 
@@ -5,7 +6,7 @@ interface Props {
   alerts: SystemAlert[];
 }
 
-export default function AlertsWidget({ alerts }: Props) {
+export default memo(function AlertsWidget({ alerts }: Props) {
   return (
     <div className="panel" style={{ maxHeight: '400px', display: 'flex', flexDirection: 'column' }}>
       <div className="panel-header" style={{ marginBottom: '1rem', flexShrink: 0 }}>
@@ -61,4 +62,4 @@ export default function AlertsWidget({ alerts }: Props) {
       </div>
     </div>
   );
-}
+});

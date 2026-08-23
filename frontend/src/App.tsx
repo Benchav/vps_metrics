@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, memo } from 'react';
 import { Activity, Cpu, MemoryStick, HardDrive, Wifi } from 'lucide-react';
 import { AreaChart, Area, ResponsiveContainer } from 'recharts';
 
@@ -14,7 +14,7 @@ import type { SystemMetrics } from '@vps-metrics/shared';
 type NavPanel = 'overview' | 'cpu' | 'memory' | 'disk' | 'network' | 'alerts';
 
 // ── Mini summary card on overview ───────────────────────────
-function SummaryCard({
+const SummaryCard = memo(function SummaryCard({
   label, value, sub, color, sparkData, icon: Icon, onClick
 }: {
   label: string; value: string; sub: string; color: string;
@@ -43,10 +43,10 @@ function SummaryCard({
       <div className="summary-card-sub">{sub}</div>
     </button>
   );
-}
+});
 
 // ── Overview Panel ───────────────────────────────────────────
-function OverviewPanel({ metrics, history, onNavigate }: {
+const OverviewPanel = memo(function OverviewPanel({ metrics, history, onNavigate }: {
   metrics: SystemMetrics; history: SystemMetrics[]; onNavigate: (p: NavPanel) => void;
 }) {
   const fmt = (b: number) => {
@@ -104,7 +104,7 @@ function OverviewPanel({ metrics, history, onNavigate }: {
       </div>
     </div>
   );
-}
+});
 
 // ── App Root ─────────────────────────────────────────────────
 export default function App() {
