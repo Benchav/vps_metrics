@@ -1,6 +1,6 @@
 import { useState, memo } from 'react';
-import { Toaster } from 'sonner';
-import { Activity, Cpu, MemoryStick, HardDrive, Wifi } from 'lucide-react';
+import { Toaster, toast } from 'sonner';
+import { Activity, Cpu, MemoryStick, HardDrive, Wifi, Download } from 'lucide-react';
 import { AreaChart, Area, ResponsiveContainer } from 'recharts';
 
 import { useMetrics } from './hooks/useMetrics';
@@ -112,6 +112,31 @@ export default function App() {
   const { metrics, history, connected, updateAvailable } = useMetrics();
   const [panel, setPanel] = useState<NavPanel>('overview');
 
+  const handleDownloadCSV = () => {
+    if (!history.length) return;
+    const headers = ['Timestamp', 'CPU_Load(%)', 'RAM_Usage(%)', 'Disk_Usage(%)', 'Net_RX(B/s)', 'Net_TX(B/s)'];
+    const rows = history.map(h => {
+      const disk = h.disks[0]?.usePercentage || 0;
+      return [
+        h.timestamp,
+        h.cpu.load.toFixed(1),
+        h.memory.usagePercentage.toFixed(1),
+        disk.toFixed(1),
+        h.network?.rx_sec || 0,
+        h.network?.tx_sec || 0
+      ].join(',');
+    });
+    const csvContent = "data:text/csv;charset=utf-8," + headers.join(',') + "\\n" + rows.join("\\n");
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `vps_metrics_${new Date().getTime()}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    toast.success("CSV report downloaded!");
+  };
+
   return (
     <div className="app-shell">
       <Toaster theme="dark" position="top-right" closeButton richColors />
@@ -122,6 +147,12 @@ export default function App() {
           JoshBen-Monitoring
         </div>
         <div className="header-meta">
+          {history.length > 0 && (
+            <button onClick={handleDownloadCSV} className="summary-card" style={{ padding: '0.25rem 0.5rem', background: 'var(--panel-bg)', minHeight: 0, gap: '0.3rem', flexDirection: 'row', alignItems: 'center' }}>
+              <Download size={14} color="var(--c-mem)" />
+              <span style={{ fontSize: '0.75rem' }}>Export CSV</span>
+            </button>
+          )}
           {metrics && (
             <span className="mono text-muted" style={{ fontSize: '0.75rem' }}>
               {metrics.os.distro} {metrics.os.release}
