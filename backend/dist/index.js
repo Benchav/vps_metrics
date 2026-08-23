@@ -15,7 +15,7 @@ const app = (0, express_1.default)();
 app.use((0, cors_1.default)());
 // --- API Routes (must be declared BEFORE static middleware and SPA fallback) ---
 app.get('/health', (req, res) => {
-    res.json({ status: 'ok', time: new Date().toISOString() });
+    res.json({ status: 'ok', uptime: process.uptime(), time: new Date().toISOString() });
 });
 // Serve static frontend assets in production
 const frontendDistPath = path_1.default.join(__dirname, '../../frontend/dist');
@@ -41,8 +41,27 @@ io.on('connection', (socket) => {
     });
 });
 // Start the hardware monitoring loop
-(0, monitor_1.startMonitoring)(io);
-server.listen(PORT, () => {
+const stopMonitoring = (0, monitor_1.startMonitoring)(io);
+const httpServer = server.listen(PORT, () => {
     console.log(`🚀 Backend server running on port ${PORT}`);
     console.log('🔓 Running in open mode (direct access).');
 });
+// Graceful Shutdown Handler
+const shutdown = () => {
+    console.log('\n[System] SIGTERM/SIGINT received. Shutting down gracefully...');
+    stopMonitoring();
+    io.close(() => {
+        console.log('[System] Socket.IO server closed.');
+    });
+    httpServer.close(() => {
+        console.log('[System] HTTP server closed.');
+        process.exit(0);
+    });
+    // Force kill if graceful shutdown takes too long (10s)
+    setTimeout(() => {
+        console.error('[System] Could not close connections in time, forcefully shutting down');
+        process.exit(1);
+    }, 10000);
+};
+process.on('SIGTERM', shutdown);
+process.on('SIGINT', shutdown);

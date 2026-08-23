@@ -24,7 +24,7 @@ function getMetricsHistory() {
 }
 function startMonitoring(io) {
     console.log('Started hardware monitoring loop...');
-    setInterval(() => __awaiter(this, void 0, void 0, function* () {
+    const timer = setInterval(() => __awaiter(this, void 0, void 0, function* () {
         try {
             const rawMetrics = yield (0, hardware_service_1.getHardwareMetrics)();
             alertEngine.evaluate(rawMetrics);
@@ -41,4 +41,8 @@ function startMonitoring(io) {
             console.error('Error fetching metrics:', err);
         }
     }), INTERVAL_MS);
+    return function stopMonitoring() {
+        clearInterval(timer);
+        console.log('Stopped hardware monitoring loop.');
+    };
 }

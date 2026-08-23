@@ -18,7 +18,7 @@ export function getMetricsHistory() {
 export function startMonitoring(io: Server) {
   console.log('Started hardware monitoring loop...');
 
-  setInterval(async () => {
+  const timer = setInterval(async () => {
     try {
       const rawMetrics = await getHardwareMetrics();
       alertEngine.evaluate(rawMetrics);
@@ -42,4 +42,9 @@ export function startMonitoring(io: Server) {
       console.error('Error fetching metrics:', err);
     }
   }, INTERVAL_MS);
+
+  return function stopMonitoring() {
+    clearInterval(timer);
+    console.log('Stopped hardware monitoring loop.');
+  };
 }
