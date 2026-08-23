@@ -138,9 +138,10 @@ export default function App() {
   };
 
   return (
-    <div className="app-shell">
+    <>
       <Toaster theme="dark" position="top-right" closeButton richColors />
-      {/* Header */}
+      <div className="app-shell">
+        {/* Header */}
       <header className="app-header">
         <div className="header-brand">
           <span className="header-logo-dot" />
@@ -212,5 +213,6 @@ export default function App() {
         </a>
       </footer>
     </div>
+    </>
   );
 }
