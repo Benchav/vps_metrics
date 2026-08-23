@@ -103,13 +103,9 @@ docker build -t vps-monitor .
 docker run -d \
   --name vps-monitor-instance \
   -p 3012:3012 \
-  -e API_KEY="tu_llave_secreta_aqui" \
   --restart unless-stopped \
   vps-monitor
 ```
-
-> **NOTA SOBRE SEGURIDAD (`API_KEY`)**:  
-> Al correr en producción a través de `ecosystem.config.js`, el servicio buscará una variable de entorno `API_KEY`. Si está definida, deberás utilizarla para asegurar el acceso a tus métricas.
 
 ## Roadmap y Próximos Pasos
 

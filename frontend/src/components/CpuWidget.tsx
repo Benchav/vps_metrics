@@ -1,6 +1,6 @@
 import { Cpu } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
-import type { SystemMetrics } from '../types';
+import type { SystemMetrics } from '@vps-metrics/shared';
 
 interface Props { cpu: SystemMetrics['cpu']; history: SystemMetrics[]; }
 

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
-import type { SystemMetrics } from '../types';
+import type { SystemMetrics } from '@vps-metrics/shared';
 
 // Connect to the backend
 const SOCKET_URL = import.meta.env.PROD 
@@ -23,6 +23,13 @@ export function useMetrics() {
 
     socket.on('disconnect', () => {
       setConnected(false);
+    });
+
+    socket.on('metrics_history', (data: SystemMetrics[]) => {
+      setHistory(data);
+      if (data.length > 0) {
+        setMetrics(data[data.length - 1]);
+      }
     });
 
     socket.on('metrics', (data: SystemMetrics) => {

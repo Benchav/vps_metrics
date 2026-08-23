@@ -9,7 +9,7 @@ import RamWidget from './components/RamWidget';
 import DiskWidget from './components/DiskWidget';
 import NetworkWidget from './components/NetworkWidget';
 import AlertsWidget from './components/AlertsWidget';
-import type { SystemMetrics } from './types';
+import type { SystemMetrics } from '@vps-metrics/shared';
 
 type NavPanel = 'overview' | 'cpu' | 'memory' | 'disk' | 'network' | 'alerts';
 

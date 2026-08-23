@@ -1,6 +1,6 @@
 import { Wifi, ArrowDownToLine, ArrowUpFromLine } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import type { SystemMetrics } from '../types';
+import type { SystemMetrics } from '@vps-metrics/shared';
 
 interface Props { network: SystemMetrics['network']; history: SystemMetrics[]; }
 

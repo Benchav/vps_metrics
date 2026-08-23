@@ -1,6 +1,6 @@
 import { MemoryStick } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import type { SystemMetrics } from '../types';
+import type { SystemMetrics } from '@vps-metrics/shared';
 
 interface Props { memory: SystemMetrics['memory']; history: SystemMetrics[]; }
 

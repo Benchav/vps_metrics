@@ -28,26 +28,14 @@ const io = new socket_io_1.Server(server, {
     }
 });
 const PORT = process.env.PORT || 3012;
-const API_KEY = process.env.API_KEY;
-// Socket authentication middleware
-io.use((socket, next) => {
-    const token = socket.handshake.auth.token;
-    if (API_KEY) {
-        if (token === API_KEY) {
-            return next();
-        }
-        return next(new Error('Authentication error: Invalid API Key'));
-    }
-    // If no API_KEY is set in environment, allow connection but warn
-    console.warn('[Warning] No API_KEY environment variable set. Socket connection allowed without authentication.');
-    return next();
-});
 // SPA fallback: must be LAST — only hits if no static file or API route matched
 app.get('*', (req, res) => {
     res.sendFile(path_1.default.join(frontendDistPath, 'index.html'));
 });
 io.on('connection', (socket) => {
     console.log(`[Socket] Client connected: ${socket.id}`);
+    // Emit history instantly for fast load
+    socket.emit('metrics_history', (0, monitor_1.getMetricsHistory)());
     socket.on('disconnect', () => {
         console.log(`[Socket] Client disconnected: ${socket.id}`);
     });
@@ -56,10 +44,5 @@ io.on('connection', (socket) => {
 (0, monitor_1.startMonitoring)(io);
 server.listen(PORT, () => {
     console.log(`🚀 Backend server running on port ${PORT}`);
-    if (API_KEY) {
-        console.log('🔒 API Key authentication is ENABLED.');
-    }
-    else {
-        console.log('⚠️ API Key authentication is DISABLED (API_KEY env variable not set).');
-    }
+    console.log('🔓 Running in open mode (direct access).');
 });

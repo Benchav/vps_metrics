@@ -5,7 +5,8 @@
   "description": "VPS Realtime Metrics Dashboard",
   "workspaces": [
     "frontend",
-    "backend"
+    "backend",
+    "packages/*"
   ],
   "scripts": {
     "dev": "npm run dev --workspaces --if-present",

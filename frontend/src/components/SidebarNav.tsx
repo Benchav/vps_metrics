@@ -1,4 +1,4 @@
-import type { SystemMetrics } from '../types';
+import type { SystemMetrics } from '@vps-metrics/shared';
 
 type NavPanel = 'overview' | 'cpu' | 'memory' | 'disk' | 'network' | 'alerts';
 

@@ -1,5 +1,5 @@
 import { Terminal, Wifi, Clock, ArrowDownToLine, ArrowUpFromLine } from 'lucide-react';
-import type { SystemMetrics } from '../types';
+import type { SystemMetrics } from '@vps-metrics/shared';
 
 interface Props {
   os: SystemMetrics['os'];

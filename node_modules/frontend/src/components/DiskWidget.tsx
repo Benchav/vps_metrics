@@ -1,5 +1,5 @@
 import { HardDrive } from 'lucide-react';
-import type { SystemMetrics } from '../types';
+import type { SystemMetrics } from '@vps-metrics/shared';
 
 interface Props {
   disks: SystemMetrics['disks'];

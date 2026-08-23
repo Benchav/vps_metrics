@@ -1,5 +1,5 @@
 import { AlertTriangle, Clock, ServerCrash } from 'lucide-react';
-import type { SystemAlert } from '../types';
+import type { SystemAlert } from '@vps-metrics/shared';
 
 interface Props {
   alerts: SystemAlert[];
