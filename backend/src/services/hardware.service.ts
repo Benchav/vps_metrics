@@ -50,13 +50,25 @@ export async function getHardwareMetrics() {
       swapUsed: mem.swapused,
       usagePercentage: mem.total > 0 ? (mem.active / mem.total) * 100 : 0,
     },
-    disks: fsSize.map((disk: any) => ({
-      fs: disk.fs,
-      type: disk.type,
-      size: disk.size,
-      used: disk.used,
-      usePercentage: disk.use,
-    })),
+    disks: fsSize
+      .filter((disk: any) => {
+        // Filter out virtual/pseudo filesystems common in Linux/Docker/Snap
+        const ignoreTypes = ['squashfs', 'tmpfs', 'devtmpfs', 'overlay', 'cgroup', 'shm', 'overlay2'];
+        if (ignoreTypes.includes(disk.type.toLowerCase())) return false;
+        if (disk.fs.startsWith('/dev/loop')) return false; // Ignore snap loops
+        return true;
+      })
+      .filter((disk: any, index: number, self: any[]) => 
+        // Deduplicate by filesystem path to prevent showing the same disk multiple times
+        index === self.findIndex((d) => d.fs === disk.fs)
+      )
+      .map((disk: any) => ({
+        fs: disk.fs,
+        type: disk.type,
+        size: disk.size,
+        used: disk.used,
+        usePercentage: disk.use,
+      })),
     diskIO: disksIO ? {
       readSpeed: Math.max(0, disksIO.rIO_sec ?? 0),
       writeSpeed: Math.max(0, disksIO.wIO_sec ?? 0),
