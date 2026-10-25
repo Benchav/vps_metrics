@@ -1,7 +1,7 @@
 FROM node:20-alpine
 
-# Install latest npm and PM2 globally
-RUN npm install -g npm@latest pm2
+# Install PM2 globally
+RUN npm install -g pm2
 
 WORKDIR /app
 
