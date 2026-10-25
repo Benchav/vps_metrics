@@ -1,20 +1,20 @@
 FROM node:20-alpine
 
-# Install PM2 globally
-RUN npm install -g pm2
+# Install latest npm and PM2 globally
+RUN npm install -g npm@latest pm2
 
 WORKDIR /app
 
-# Copy root package and workspace config
-COPY package.json ./
+# Copy root package and workspace config (including package-lock.json)
+COPY package*.json ./
 
 # Copy package.jsons for workspaces
 COPY backend/package.json ./backend/
 COPY frontend/package.json ./frontend/
 COPY packages/shared/package.json ./packages/shared/
 
-# Install dependencies
-RUN npm install
+# Install dependencies deterministically
+RUN npm ci
 
 # Copy source code
 COPY . .
